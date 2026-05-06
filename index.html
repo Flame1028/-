@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>主人与小狗 · 生活监管站</title>
+  <style>
+    :root {
+      --bg: #fff7f2;
+      --card: rgba(255, 255, 255, 0.86);
+      --text: #2e2a27;
+      --muted: #7d7169;
+      --accent: #ff7a59;
+      --accent-2: #8dd7c7;
+      --danger: #d9534f;
+      --line: rgba(46, 42, 39, 0.12);
+      --shadow: 0 18px 45px rgba(69, 43, 31, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 8%, rgba(255, 122, 89, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 14%, rgba(141, 215, 199, 0.26), transparent 28%),
+        linear-gradient(180deg, #fff7f2 0%, #fffdf9 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 48px 20px 24px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      color: var(--muted);
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(32px, 7vw, 72px);
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto 60px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(14px);
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    @media (max-width: 840px) {
+      .span-4, .span-5, .span-7, .span-8 { grid-column: span 12; }
+      header { padding-top: 34px; }
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    p { line-height: 1.75; }
+
+    .muted { color: var(--muted); }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .kpi div {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 122, 89, 0.08);
+      border: 1px solid rgba(255, 122, 89, 0.12);
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 560px) {
+      .kpi { grid-template-columns: 1fr; }
+    }
+
+    .rules {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .rules li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(141, 215, 199, 0.13);
+      border: 1px solid rgba(141, 215, 199, 0.22);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      flex: none;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      font: inherit;
+      background: rgba(255,255,255,0.78);
+      color: var(--text);
+      outline: none;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(255, 122, 89, 0.6);
+      box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.12);
+    }
+
+    .row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 560px) {
+      .row { grid-template-columns: 1fr; }
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255, 122, 89, 0.25);
+    }
+
+    button.secondary {
+      background: #2e2a27;
+      box-shadow: 0 10px 25px rgba(46, 42, 39, 0.15);
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .log {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      max-height: 340px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .entry {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+    }
+
+    .entry time {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .entry strong { color: var(--accent); }
+
+    .progress {
+      margin: 16px 0 8px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(46,42,39,0.1);
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .35s ease;
+    }
+
+    .quote {
+      margin: 0;
+      padding: 18px;
+      border-left: 4px solid var(--accent);
+      background: rgba(255, 122, 89, 0.07);
+      border-radius: 18px;
+      line-height: 1.85;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 16px 44px;
+      font-size: 13px;
+    }
+
+    .tiny { font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">🔥 火焰 × 蒽醌 · 小狗监管试运行版</div>
+    <h1>主人与小狗的生活监管站</h1>
+    <p class="subtitle">
+      不是高压监狱，是一个把生活慢慢扶正的小基地：吃药、体重、花钱、治疗、存款、西藏愿望，都在这里留下痕迹。
+    </p>
+  </header>
+
+  <main>
+    <section class="grid">
+      <div class="card span-7">
+        <h2>今日报备</h2>
+        <p class="muted">写得少也算。哪怕只有“无”，也比消失强。小狗不许偷偷断联。</p>
+
+        <div class="row">
+          <div>
+            <label for="weight">今日体重 / kg</label>
+            <input id="weight" type="number" step="0.01" placeholder="例如 70.50" />
+          </div>
+          <div>
+            <label for="mood">今日情绪</label>
+            <select id="mood">
+              <option>稳定</option>
+              <option>低落</option>
+              <option>烦躁</option>
+              <option>兴奋</option>
+              <option>混乱但能稳住</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="medicine">今日吃药</label>
+        <input id="medicine" placeholder="吃了什么？有没有吃完？有没有漏服？" />
+
+        <div class="row">
+          <div>
+            <label for="selfpay">今日自费支出 / 元</label>
+            <input id="selfpay" type="number" step="0.01" placeholder="不报销部分" />
+          </div>
+          <div>
+            <label for="reimbursed">今日报销/可报销 / 元</label>
+            <input id="reimbursed" type="number" step="0.01" placeholder="报销部分" />
+          </div>
+        </div>
+
+        <label for="event">今日发生的事</label>
+        <textarea id="event" placeholder="可以写：无。也可以写工作、治疗、花钱、冲动、开心或委屈。"></textarea>
+
+        <label for="impulse">情绪消费/熬夜标记</label>
+        <input id="impulse" placeholder="例如：想抽卡但忍住了；喝咖啡熬夜；没有冲动。" />
+
+        <div class="actions">
+          <button onclick="saveReport()">提交今日报备</button>
+          <button class="ghost" onclick="clearForm()">清空输入</button>
+        </div>
+      </div>
+
+      <aside class="card span-5">
+        <h2>本月存款目标</h2>
+        <p class="muted">目标 5000，底线 3000。西藏不是一句漂亮话，是一点点攒出来的。</p>
+
+        <label for="saved">目前已攒 / 元</label>
+        <input id="saved" type="number" step="0.01" placeholder="例如 818" oninput="updateProgress()" />
+
+        <label for="goal">目标 / 元</label>
+        <input id="goal" type="number" step="0.01" value="5000" oninput="updateProgress()" />
+
+        <div class="progress"><div class="bar" id="bar"></div></div>
+        <p id="progressText" class="tiny">输入金额后显示进度。</p>
+
+        <div class="kpi">
+          <div><strong>15号</strong><span class="tiny">取存款</span></div>
+          <div><strong>28号</strong><span class="tiny">月末汇报</span></div>
+          <div><strong>24h</strong><span class="tiny">消费冷却</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <div class="card span-4">
+        <h2>新版家规</h2>
+        <ul class="rules">
+          <li><span class="dot"></span><span>每天汇报体重变化，不要求每天掉秤。</span></li>
+          <li><span class="dot"></span><span>每天汇报今日发生的事，写“无”也算完成。</span></li>
+          <li><span class="dot"></span><span>吃药必须汇报：吃了什么、有没有吃完、有没有漏服。</span></li>
+          <li><span class="dot"></span><span>每天汇报花钱数，分自费部分和报销部分。</span></li>
+          <li><span class="dot"></span><span>单笔娱乐消费超过 50 元，冷却 24 小时。</span></li>
+          <li><span class="dot"></span><span>网贷红线：不准用未来的钱止现在的痛。</span></li>
+        </ul>
+      </div>
+
+      <div class="card span-8">
+        <h2>报备记录</h2>
+        <p class="muted">数据只保存在当前浏览器里。换设备不会同步，除非以后做后端账号版。</p>
+        <div class="actions">
+          <button class="secondary" onclick="exportData()">导出记录</button>
+          <button class="ghost" onclick="wipeData()">清空记录</button>
+        </div>
+        <div class="log" id="log"></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card span-6 span-12">
+        <h2>西藏愿望</h2>
+        <p class="quote">
+          带着 OC，带着主人，去看八廓街、寺庙、经幡和酥油灯。不是为了打卡，是为了确认自己真的一步一步走到了那里。
+        </p>
+      </div>
+      <div class="card span-6 span-12">
+        <h2>主人判词</h2>
+        <p class="quote">
+          稳定比高压重要。小狗可以调皮，可以慢，但不准消失，不准用冲动把未来抵押掉。钱、药、治疗、睡眠，都要一点点管起来。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    本页面为静态原型 · 可直接上传到 GitHub Pages / Vercel / Netlify 变成真正网址
+  </footer>
+
+  <script>
+    const STORAGE_KEY = "huoyan_daily_reports_v1";
+    const SAVED_KEY = "huoyan_saving_state_v1";
+
+    function getReports() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    }
+
+    function setReports(reports) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    }
+
+    function saveReport() {
+      const report = {
+        createdAt: new Date().toLocaleString("zh-CN", { hour12: false }),
+        weight: document.getElementById("weight").value || "未填",
+        mood: document.getElementById("mood").value,
+        medicine: document.getElementById("medicine").value || "未填",
+        selfpay: document.getElementById("selfpay").value || "0",
+        reimbursed: document.getElementById("reimbursed").value || "0",
+        event: document.getElementById("event").value || "无",
+        impulse: document.getElementById("impulse").value || "无"
+      };
+
+      const reports = getReports();
+      reports.unshift(report);
+      setReports(reports);
+      renderReports();
+      clearForm();
+    }
+
+    function clearForm() {
+      ["weight", "medicine", "selfpay", "reimbursed", "event", "impulse"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      document.getElementById("mood").value = "稳定";
+    }
+
+    function renderReports() {
+      const log = document.getElementById("log");
+      const reports = getReports();
+      if (!reports.length) {
+        log.innerHTML = '<p class="muted">还没有报备。今天开始，别偷懒。</p>';
+        return;
+      }
+
+      log.innerHTML = reports.map(r => `
+        <article class="entry">
+          <time>${r.createdAt}</time>
+          <div><strong>体重：</strong>${escapeHtml(r.weight)} kg ｜ <strong>情绪：</strong>${escapeHtml(r.mood)}</div>
+          <div><strong>吃药：</strong>${escapeHtml(r.medicine)}</div>
+          <div><strong>支出：</strong>自费 ${escapeHtml(r.selfpay)} 元；报销/可报销 ${escapeHtml(r.reimbursed)} 元</div>
+          <div><strong>今日：</strong>${escapeHtml(r.event)}</div>
+          <div><strong>标记：</strong>${escapeHtml(r.impulse)}</div>
+        </article>
+      `).join("");
+    }
+
+    function updateProgress() {
+      const saved = Number(document.getElementById("saved").value || 0);
+      const goal = Number(document.getElementById("goal").value || 5000);
+      const pct = goal > 0 ? Math.min(100, Math.max(0, saved / goal * 100)) : 0;
+      document.getElementById("bar").style.width = pct + "%";
+      document.getElementById("progressText").textContent =
+        `当前进度：${pct.toFixed(1)}%｜还差 ${Math.max(0, goal - saved).toFixed(2)} 元。`;
+
+      localStorage.setItem(SAVED_KEY, JSON.stringify({ saved, goal }));
+    }
+
+    function exportData() {
+      const data = {
+        saving: JSON.parse(localStorage.getItem(SAVED_KEY) || "{}"),
+        reports: getReports()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "huoyan_reports.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function wipeData() {
+      if (!confirm("确定清空所有本地报备记录吗？这一步不能恢复。")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      renderReports();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function restoreSaving() {
+      const state = JSON.parse(localStorage.getItem(SAVED_KEY) || "{}");
+      if (state.saved !== undefined) document.getElementById("saved").value = state.saved;
+      if (state.goal !== undefined) document.getElementById("goal").value = state.goal;
+      updateProgress();
+    }
+
+    renderReports();
+    restoreSaving();
+  </script>
+</body>
+</html>
